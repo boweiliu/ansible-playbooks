@@ -41,12 +41,15 @@
         state: present
         key: "{{ copy_local_key }}"
 
-    - name: Disable password authentication for root
+    - name: Disable ssh for root
       lineinfile:
         path: /etc/ssh/sshd_config
         state: present
         regexp: '^#?PermitRootLogin'
-        line: 'PermitRootLogin prohibit-password'
+        line: 'PermitRootLogin no'
+
+    - name: Reload ssh service
+      service: name=ssh state=reloaded
 
 # Install Packages
     - name: Update apt
