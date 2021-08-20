@@ -58,7 +58,7 @@
 
     - name: Slurp the newly generated remote ssh key
       slurp:
-        src: /home/'{{ create_user }}'/.ssh/id_rsa.pub
+        src: /home/{{ create_user }}/.ssh/id_rsa.pub
       register: slurpfile
  
 # necessary to ssh into itself
