@@ -30,19 +30,43 @@
       user:
         name: "{{ create_user }}"
         state: present
+        generate_ssh_key: yes
         groups: wheel
         append: true
         create_home: true
         shell: /bin/bash
 
-    - name: Set authorized key for remote user
+    - name: Set authorized key for remote user from controller
       authorized_key:
         user: "{{ create_user }}"
         state: present
         key: "{{ copy_local_key }}"
 
-# TODO(bowei): copy over root auth keys into new user
-# TODO(bowei): run ssh-keygen as new user and add yourself to auth keys (necessary to ssh into self)
+    - name: Set other authorized keys
+      authorized_key:
+        user: "{{ create_user }}"
+        state: present
+        key: '{{ item }}'
+      with_file:
+        - public_keys/work-laptop.pub
+        - public_keys/boweis-macbook-pro.pub
+
+    - name: Create a ssh key for the new user
+      user:
+        name: "{{ create_user }}"
+        generate_ssh_key: yes
+
+    - name: Slurp the newly generated remote ssh key
+      slurp:
+        src: /home/'{{ create_user }}'/.ssh/id_rsa.pub
+      register: slurpfile
+ 
+# necessary to ssh into itself
+    - name: Set authorized key for newly generated remote host key on remote host itself
+      authorized_key:
+        user: "{{ create_user }}"
+        state: present
+        key: "{{ slurpfile['content'] | b64decode }}"
 
     - name: Disable ssh for root
       lineinfile:
