@@ -65,13 +65,13 @@
     - name: Copy VNC service file, optional
       copy: src=files/vncserver@.service dest=/etc/systemd/system/vncserver@.service owner=root group=root mode=0644
 
-    - name: Create vnc dir
+    - name: Create vnc dir root
       file:
         path: ~/.vnc
         mode: 0755
         state: directory
 
-    - name: Create vnc dir
+    - name: Create vnc dir user
       file:
         path: ~/.vnc
         mode: 0755
@@ -79,38 +79,38 @@
       vars:
         ansible_become: false
       
-    - name: Generate random passwd
+    - name: Generate random passwd root
       shell: |
         head -c8 /dev/urandom | md5sum | head -c8 | vncpasswd -f > ~/.vnc/passwd
 
-    - name: Generate random passwd
+    - name: Generate random passwd user
       shell: |
         head -c8 /dev/urandom | md5sum | head -c8 | vncpasswd -f > ~/.vnc/passwd
       vars:
         ansible_become: false
 
-    - name: Update file perms
+    - name: Update file perms root
       file:
         path: ~/.vnc/passwd
         mode: 0600
 
-    - name: Update file perms
+    - name: Update file perms user
       file:
         path: ~/.vnc/passwd
         mode: 0600
       vars:
         ansible_become: false
 
-    - name: Copy VNC startup script
+    - name: Copy VNC startup script root
       copy: src=files/xstartup dest=~/.vnc/xstartup mode=0644
 
-    - name: Copy VNC startup script
+    - name: Copy VNC startup script user
       copy: src=files/xstartup dest=~/.vnc/xstartup mode=0644
       vars:
         ansible_become: false
 
     - name: Reload vnc service
-      service: name=vncserver@1 state=reloaded
+      service: name=vncserver@1 state=started daemon_reload=yes
 
 # UFW Setup
     - name: UFW - Allow SSH connections
