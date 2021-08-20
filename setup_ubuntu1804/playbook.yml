@@ -60,7 +60,7 @@
 
 # Setup vnc server
     - name: Copy VNC service file, optional
-      copy: src=files/vncserver@:1.service dest=/etc/systemd/system/vncserver@:1.service owner=root group=root mode=0644
+      copy: src=files/vncserver@.service dest=/etc/systemd/system/vncserver@.service owner=root group=root mode=0644
 
     - name: Create vnc dir
       file:
@@ -89,7 +89,7 @@
 #        ansible_become: false
 
     - name: Reload vnc service
-      service: name=vncserver@:1 state=reloaded
+      service: name=vncserver@1 state=reloaded
 
 # UFW Setup
     - name: UFW - Allow SSH connections
