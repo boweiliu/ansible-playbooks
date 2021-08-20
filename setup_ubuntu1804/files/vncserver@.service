@@ -1,3 +1,5 @@
+# source: https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-20-04
+
 [Unit]
 Description=Start TightVNC server at startup
 After=syslog.target network.target
@@ -10,7 +12,10 @@ WorkingDirectory=/home/bowei
 
 PIDFile=/home/bowei/.vnc/%H:%i.pid
 ExecStartPre=-/usr/bin/vncserver -kill :%i > /dev/null 2>&1
-ExecStart=/usr/bin/vncserver -depth 24 -geometry 1280x800 -localhost :%i
+#ExecStart=/usr/bin/vncserver -depth 24 -geometry 1280x800 -localhost :%i
+# FUCKK . need to ssh to itself and spawn a tty to avoid systemd interaction with tigervnc: https://github.com/TigerVNC/tigervnc/issues/684 and https://ubuntuforums.org/showthread.php?t=2427087
+# This doesnt work: https://superuser.com/questions/319043/runing-a-command-without-inheriting-parents-environment
+ExecStart=screen -dm ssh -ntt bowei@localhost '/usr/bin/vncserver -depth 24 -geometry 1280x800 -localhost :%i ; bash -l'
 ExecStop=/usr/bin/vncserver -kill :%i
 
 [Install]

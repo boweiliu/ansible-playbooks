@@ -41,6 +41,9 @@
         state: present
         key: "{{ copy_local_key }}"
 
+# TODO(bowei): copy over root auth keys into new user
+# TODO(bowei): run ssh-keygen as new user and add yourself to auth keys (necessary to ssh into self)
+
     - name: Disable ssh for root
       lineinfile:
         path: /etc/ssh/sshd_config
