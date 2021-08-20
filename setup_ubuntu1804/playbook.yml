@@ -58,6 +58,42 @@
     - name: Install required system packages
       apt: name={{ sys_packages }} state=latest
 
+# Setup vnc server
+    - name: Copy VNC service file, optional
+      copy: src=files/vncserver@:1.service dest=/etc/systemd/system/vncserver@:1.service owner=root group=root mode=0644
+
+    - name: Create vnc dir
+      file:
+        path: ~/.vnc
+        mode: 0755
+        state: directory
+      vars:
+        ansible_become: false
+      
+    - name: Generate random passwd
+      shell: |
+        head -c8 /dev/urandom | md5sum | head -c8 | vncpasswd -f > ~/.vnc/passwd
+      vars:
+        ansible_become: false
+
+    - name: Update file perms
+      file:
+        path: ~/.vnc/passwd
+        mode: 0600
+      vars:
+        ansible_become: false
+
+    - name: Copy VNC startup script
+      copy: src=files/xstartup dest=~/.vnc/xstartup mode=0644
+      vars:
+        ansible_become: false
+
+#    - name: Start vnc
+#      shell: |
+#        vncserver -kill :1 ; vncserver
+#      vars:
+#        ansible_become: false
+
 # UFW Setup
     - name: UFW - Allow SSH connections
       ufw:
