@@ -41,6 +41,9 @@
         state: present
         key: "{{ copy_local_key }}"
 
+# TODO(bowei): copy over root auth keys into new user
+# TODO(bowei): run ssh-keygen as new user and add yourself to auth keys (necessary to ssh into self)
+
     - name: Disable ssh for root
       lineinfile:
         path: /etc/ssh/sshd_config
@@ -67,26 +70,44 @@
         path: ~/.vnc
         mode: 0755
         state: directory
-#      vars:
-#        ansible_become: false
+
+    - name: Create vnc dir
+      file:
+        path: ~/.vnc
+        mode: 0755
+        state: directory
+      vars:
+        ansible_become: false
       
     - name: Generate random passwd
       shell: |
         head -c8 /dev/urandom | md5sum | head -c8 | vncpasswd -f > ~/.vnc/passwd
-#      vars:
-#        ansible_become: false
+
+    - name: Generate random passwd
+      shell: |
+        head -c8 /dev/urandom | md5sum | head -c8 | vncpasswd -f > ~/.vnc/passwd
+      vars:
+        ansible_become: false
 
     - name: Update file perms
       file:
         path: ~/.vnc/passwd
         mode: 0600
-#      vars:
-#        ansible_become: false
+
+    - name: Update file perms
+      file:
+        path: ~/.vnc/passwd
+        mode: 0600
+      vars:
+        ansible_become: false
 
     - name: Copy VNC startup script
       copy: src=files/xstartup dest=~/.vnc/xstartup mode=0644
-#      vars:
-#        ansible_become: false
+
+    - name: Copy VNC startup script
+      copy: src=files/xstartup dest=~/.vnc/xstartup mode=0644
+      vars:
+        ansible_become: false
 
     - name: Reload vnc service
       service: name=vncserver@1 state=reloaded
