@@ -113,9 +113,9 @@
       shell: |
         head -c8 /dev/urandom | md5sum | head -c8 | vncpasswd -f > ~/.vnc/passwd
 
-    - name: Generate random passwd user
+    - name: Generate passwd user
       shell: |
-        head -c8 /dev/urandom | md5sum | head -c8 | vncpasswd -f > ~/.vnc/passwd
+        echo 'digitalocean' | vncpasswd -f > ~/.vnc/passwd
       vars:
         ansible_become_user: "{{ create_user }}"
 
