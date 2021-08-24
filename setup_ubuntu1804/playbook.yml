@@ -190,14 +190,28 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
-    - name: Add pyenv to .profile
-      lineinfile: |
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
+#    - name: Add pyenv to .profile
+#      lineinfile: |
+#export PYENV_ROOT="$HOME/.pyenv"
+#export PATH="$PYENV_ROOT/bin:$PATH"
+#eval "$(pyenv init --path)"
+#
+#        
+#    - name: Add pyenv to .bashrc
+#      lineinfile:
+#eval "$(pyenv init -)"
+#
 
-        
-    - name: Add pyenv to .bashrc
-      lineinfile:
-eval "$(pyenv init -)"
+# idea setup
+    - name: Download intellij IDEA community gzip
+      get_url:
+        url: https://download.jetbrains.com/idea/ideaIC-2021.2.1.tar.gz
+        dest: /etc/ideaIC-2021.2.1.tar.gz
+
+    - name: Unzip intellij IDEA community gzip
+      shell: |
+        tar -xzvf /etc/ideaIC-2021.2.1.tar.gz
+      args:
+        creates: /etc/idea-IC-212.5080.55/LICENSE.txt
+        chdir: /etc
 
