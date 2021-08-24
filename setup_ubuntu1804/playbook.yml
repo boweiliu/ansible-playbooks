@@ -75,6 +75,12 @@
         regexp: '^#?PermitRootLogin'
         line: 'PermitRootLogin no'
 
+    - name: add own fingerprint to known_hosts
+      shell: |
+        ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
     - name: Reload ssh service
       service: name=ssh state=reloaded
 
