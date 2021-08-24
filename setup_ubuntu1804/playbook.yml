@@ -101,7 +101,7 @@
         mode: 0755
         state: directory
       vars:
-        ansible_become: false
+        ansible_become_user: "{{ create_user }}"
       
     - name: Generate random passwd root
       shell: |
@@ -111,7 +111,7 @@
       shell: |
         head -c8 /dev/urandom | md5sum | head -c8 | vncpasswd -f > ~/.vnc/passwd
       vars:
-        ansible_become: false
+        ansible_become_user: "{{ create_user }}"
 
     - name: Update file perms root
       file:
@@ -123,7 +123,7 @@
         path: ~/.vnc/passwd
         mode: 0600
       vars:
-        ansible_become: false
+        ansible_become_user: "{{ create_user }}"
 
     - name: Copy VNC startup script root
       copy: src=files/xstartup dest=~/.vnc/xstartup mode=0644
@@ -131,7 +131,7 @@
     - name: Copy VNC startup script user
       copy: src=files/xstartup dest=~/.vnc/xstartup mode=0644
       vars:
-        ansible_become: false
+        ansible_become_user: "{{ create_user }}"
 
     - name: Reload vnc service
       service: name=vncserver@1 state=started daemon_reload=yes
