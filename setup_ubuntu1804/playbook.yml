@@ -215,3 +215,8 @@
         creates: /etc/idea-IC-212.5080.55/LICENSE.txt
         chdir: /etc
 
+
+#    - name: Add workaround for red screen issue
+#      lineinfile: |
+#-Dsun.java2d.xrender=false
+#      file: /etc/idea-IC-212.5080.55/bin/idea64.vmoptions
