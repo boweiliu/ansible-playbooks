@@ -201,7 +201,7 @@
 
     - name: Run pyenv-installer (idempotent shell command)
       shell: |
-        bash /etc/pyenv-installer
+        ls /home/"{{ create_user }}"/.pyenv || bash /etc/pyenv-installer
       args:
         creates: /home/"{{ create_user }}"/.pyenv/README.md
       vars:
