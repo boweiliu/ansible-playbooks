@@ -207,6 +207,12 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
+#    - name: Run pyenv install py3.9
+#      shell: |
+#        /home/"{{ create_user }}"/.pyenv/bin/pyenv install 3.9.1
+#      vars:
+#        ansible_become_user: "{{ create_user }}"
+
 #    - name: Add pyenv to .profile
 #      lineinfile: |
 #export PYENV_ROOT="$HOME/.pyenv"
@@ -218,6 +224,34 @@
 #      lineinfile:
 #eval "$(pyenv init -)"
 #
+
+    - name: Download pip installer
+      get_url:
+        url: https://bootstrap.pypa.io/get-pip.py
+        dest: /etc/get-pip.py
+
+    - name: Run pip install for 3.9
+      shell: |
+        python3.9 /etc/get-pip.py
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Download node installer
+      get_url:
+        url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh
+        dest: /etc/install-nvm.sh
+
+    - name: Run nvm install
+      shell: |
+        bash /etc/install-nvm.sh
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: install nvm
+      shell: |
+        nvm install 10.24.1
+      vars:
+        ansible_become_user: "{{ create_user }}"
 
 # idea setup
     - name: Download intellij IDEA community gzip
