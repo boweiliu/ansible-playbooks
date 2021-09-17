@@ -108,6 +108,26 @@
         name: 
           - tailscale
 
+    - name: Install docker - add repository keys
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+
+    - name: Install docker compose
+      ansible.builtin.apt:
+        update_cache: yes
+        state: latest
+        name: 
+          - docker-compose
+
 # Setup vnc server
     - name: Copy VNC service file, optional
       copy: src=files/vncserver@.service dest=/etc/systemd/system/vncserver@.service owner=root group=root mode=0644
@@ -259,6 +279,11 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
+    - name: Configure gradle
+      shell: |
+        mkdir -p /home/"{{ create_user }}"/.gradle && echo 'systemProp.disableKapt=true' > /home/"{{ create_user }}"/.gradle/gradle.properties
+      vars:
+        ansible_become_user: "{{ create_user }}"
 # idea setup
     - name: Download intellij IDEA community gzip
       get_url:
