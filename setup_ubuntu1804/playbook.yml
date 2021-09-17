@@ -247,9 +247,15 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
-    - name: install nvm
+    - name: install node 10
       shell: |
         nvm install 10.24.1
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: install yarn
+      shell: |
+        npm install -g yarn http-server
       vars:
         ansible_become_user: "{{ create_user }}"
 
