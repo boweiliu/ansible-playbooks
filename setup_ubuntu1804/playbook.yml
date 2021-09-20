@@ -138,7 +138,7 @@
     - name: Add remote user to docker group
       user:
         name: "{{ create_user }}"
-        group: docker
+        groups: docker
         append: yes
 
 # Setup vnc server
