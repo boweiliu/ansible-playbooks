@@ -282,7 +282,7 @@
 
     - name: install yarn
       shell: |
-        npm install -g yarn http-server
+        /bin/bash -i -c 'npm install -g yarn http-server'
       vars:
         ansible_become_user: "{{ create_user }}"
 
@@ -291,7 +291,9 @@
         mkdir -p /home/"{{ create_user }}"/.gradle && echo 'systemProp.disableKapt=true' > /home/"{{ create_user }}"/.gradle/gradle.properties
       vars:
         ansible_become_user: "{{ create_user }}"
+
 # idea setup
+
     - name: Download intellij IDEA community gzip
       get_url:
         url: https://download.jetbrains.com/idea/ideaIC-2021.2.1.tar.gz
