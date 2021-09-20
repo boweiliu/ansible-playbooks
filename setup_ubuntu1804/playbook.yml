@@ -128,6 +128,19 @@
         name: 
           - docker-compose
 
+# sudo groupadd docker
+    - name: Create docker group
+      group:
+        name: docker
+        state: present
+
+# sudo groupadd docker
+    - name: Add remote user to docker group
+      user:
+        name: "{{ create_user }}"
+        group: docker
+        append: yes
+
 # Setup vnc server
     - name: Copy VNC service file, optional
       copy: src=files/vncserver@.service dest=/etc/systemd/system/vncserver@.service owner=root group=root mode=0644
@@ -183,6 +196,7 @@
     - name: UFW - Allow SSH connections
       ufw:
         rule: allow
+        src: 104.56.115.242
         name: OpenSSH
 
     - name: UFW - Deny all other incoming traffic by default
