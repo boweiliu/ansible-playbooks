@@ -194,7 +194,7 @@
     - name: UFW - allow incoming on private networks
       ufw:
         rule: allow
-        proto: any
+        proto: tcp
         port: any
         src: 100.64.0.0/10
         direction: in
