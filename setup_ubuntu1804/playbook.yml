@@ -197,7 +197,7 @@
         proto: any
         port: any
         src: 100.64.0.0/10
-        direction: incoming
+        direction: in
 
 # pip setup
     - name: Download get-pip
