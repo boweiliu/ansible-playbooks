@@ -195,7 +195,6 @@
       ufw:
         rule: allow
         proto: tcp
-        port: any
         src: 100.64.0.0/10
         direction: in
 
