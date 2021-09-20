@@ -191,6 +191,14 @@
         policy: deny
         direction: incoming
 
+    - name: UFW - allow incoming on private networks
+      ufw:
+        rule: allow
+        proto: any
+        port: any
+        src: 100.64.0.0/10
+        direction: incoming
+
 # pip setup
     - name: Download get-pip
       get_url:
