@@ -281,7 +281,7 @@
         url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh
         dest: /etc/install-nvm.sh
 
-    - name: Run nvm install
+    - name: fuckit, nvm install instead
       shell: |
         bash /etc/install-nvm.sh
       vars:
@@ -290,6 +290,18 @@
     - name: install node 10
       shell: |
         /bin/bash -i -c 'nvm install 10.24.1'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: install node 12
+      shell: |
+        /bin/bash -i -c 'nvm install 12.22.6'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: set node 12 as default
+      shell: |
+        /bin/bash -i -c 'nvm alias default 12.22.6'
       vars:
         ansible_become_user: "{{ create_user }}"
 
