@@ -108,6 +108,9 @@
         name: 
           - tailscale
 
+    - name: Turn off baremetal postgres
+      service: name=postgres state=stopped
+
     - name: Install docker - add repository keys
       ansible.builtin.apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
