@@ -279,6 +279,12 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
+    - name: Run pip install aws
+      shell: |
+        python3 -m pip install -U awscli
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
     - name: Download node installer
       get_url:
         url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh
