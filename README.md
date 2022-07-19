@@ -1,3 +1,19 @@
+# instructions
+
+1. create bootstrap docean droplet via ui
+2. fix your putty settings - see https://github.com/jacektrocinski/pretty-putty
+3. update putty if needed (security)
+4. putty-gen and upload it to docean (remember to copy paste the openssh format out of the dialog box, dont use the saved key file!)
+5. get into the bootstrap droplet
+6. clone this repo
+7. snap install doctl
+8. python3 -m pip
+9. curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py ; python3 get-pip.py
+9. python3 -m pip install --upgrade ansible
+10. ansible-playbook should now work
+11. ssh-keygen to make a control key
+12. upload boostrap control key to docean
+
 # DO Community - Ansible Playbooks
 
 A collection of minimalist Ansible playbooks for automating server setups, based on DigitalOcean's Community guides.
