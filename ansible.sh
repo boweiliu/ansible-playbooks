@@ -1,4 +1,6 @@
 #!/bin/bash
 
-ansible-playbook --help
+cd setup_ubuntu_users
+
+ansible-playbook playbook.yml
 
