@@ -1,3 +1,6 @@
 *.retry
 .idea
 **/.*.swp
+**/.swp
+
+
