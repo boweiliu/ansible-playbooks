@@ -1,0 +1,348 @@
+#################################################
+# DO Community Playbooks: Initial Server Setup
+#################################################
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+    - name: Install Prerequisites
+      apt: name=aptitude update_cache=yes state=latest force_apt_get=yes
+
+# Sudo Group Setup
+    - name: Make sure we have a 'wheel' group
+      group:
+        name: wheel
+        state: present
+
+    - name: Allow 'wheel' group to have passwordless sudo
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: '/usr/sbin/visudo -cf %s'
+
+# User + Key Setup
+    - name: Create a new regular user with sudo privileges
+      user:
+        name: "{{ create_user }}"
+        state: present
+        generate_ssh_key: yes
+        groups: wheel
+        append: true
+        create_home: true
+        shell: /bin/bash
+
+    - name: Set authorized key for remote user from controller
+      authorized_key:
+        user: "{{ create_user }}"
+        state: present
+        key: "{{ copy_local_key }}"
+
+    - name: Set other authorized keys
+      authorized_key:
+        user: "{{ create_user }}"
+        state: present
+        key: '{{ item }}'
+      with_file:
+        - public_keys/work-laptop.pub
+        - public_keys/boweis-macbook-pro.pub
+        - public_keys/boweis-windows-sha256.pub
+
+    - name: Create a ssh key for the new user
+      user:
+        name: "{{ create_user }}"
+        generate_ssh_key: yes
+
+    - name: Slurp the newly generated remote ssh key
+      slurp:
+        src: /home/{{ create_user }}/.ssh/id_rsa.pub
+      register: slurpfile
+ 
+# necessary to ssh into itself
+    - name: Set authorized key for newly generated remote host key on remote host itself
+      authorized_key:
+        user: "{{ create_user }}"
+        state: present
+        key: "{{ slurpfile['content'] | b64decode }}"
+
+    - name: Disable ssh for root
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+
+    - name: add own fingerprint to known_hosts
+      shell: |
+        ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Reload ssh service
+      service: name=ssh state=reloaded
+
+# Install Packages
+    - name: Update apt
+      apt: update_cache=yes
+
+    - name: Install required system packages
+      apt: name={{ sys_packages }} state=latest
+
+    - name: Install tailscale - add repository keys
+      ansible.builtin.apt_key:
+        url: https://pkgs.tailscale.com/stable/ubuntu/focal.gpg
+        state: present
+
+    - name: Install tailscale - update sources list
+      ansible.builtin.get_url:
+        url: https://pkgs.tailscale.com/stable/ubuntu/focal.list
+        dest: /etc/apt/sources.list.d/tailscale.list
+
+    - name: Install tailscale - apt update and install tailscale
+      ansible.builtin.apt:
+        update_cache: yes
+        state: latest
+        name: 
+          - tailscale
+
+    - name: Turn off baremetal postgres
+      service: name=postgres state=stopped
+
+    - name: Install docker - add repository keys
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+
+    - name: Install docker compose
+      ansible.builtin.apt:
+        update_cache: yes
+        state: latest
+        name: 
+          - docker-compose
+
+# sudo groupadd docker
+    - name: Create docker group
+      group:
+        name: docker
+        state: present
+
+# sudo groupadd docker
+    - name: Add remote user to docker group
+      user:
+        name: "{{ create_user }}"
+        groups: docker
+        append: yes
+
+# Setup vnc server
+    - name: Copy VNC service file, optional
+      copy: src=files/vncserver@.service dest=/etc/systemd/system/vncserver@.service owner=root group=root mode=0644
+
+    - name: Create vnc dir root
+      file:
+        path: ~/.vnc
+        mode: 0755
+        state: directory
+
+    - name: Create vnc dir user
+      file:
+        path: ~/.vnc
+        mode: 0755
+        state: directory
+      vars:
+        ansible_become_user: "{{ create_user }}"
+      
+    - name: Generate random passwd root
+      shell: |
+        head -c8 /dev/urandom | md5sum | head -c8 | vncpasswd -f > ~/.vnc/passwd
+
+    - name: Generate passwd user
+      shell: |
+        echo 'digitalocean' | vncpasswd -f > ~/.vnc/passwd
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Update file perms root
+      file:
+        path: ~/.vnc/passwd
+        mode: 0600
+
+    - name: Update file perms user
+      file:
+        path: ~/.vnc/passwd
+        mode: 0600
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Copy VNC startup script root
+      copy: src=files/xstartup dest=~/.vnc/xstartup mode=0644
+
+    - name: Copy VNC startup script user
+      copy: src=files/xstartup dest=~/.vnc/xstartup mode=0644
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Reload vnc service
+      service: name=vncserver@1 state=started daemon_reload=yes
+
+# UFW Setup
+    - name: UFW - Allow SSH connections
+      ufw:
+        rule: allow
+        src: 104.56.115.242
+        name: OpenSSH
+
+    - name: UFW - Deny all other incoming traffic by default
+      ufw:
+        state: enabled
+        policy: deny
+        direction: incoming
+
+    - name: UFW - allow incoming on private networks
+      ufw:
+        rule: allow
+        src: 100.64.0.0/10
+        direction: in
+
+# pip setup
+    - name: Download get-pip
+      get_url:
+        url: https://bootstrap.pypa.io/get-pip.py
+        dest: /etc/get-pip.py
+
+    - name: Run get-pip (idempotent shell command)
+      shell: |
+        python3 -m pip --version || python3 /etc/get-pip.py
+
+# pdm setup
+    - name: Download install pdm
+      get_url:
+        url: https://raw.githubusercontent.com/pdm-project/pdm/main/install-pdm.py
+        dest: /etc/install-pdm.py
+
+    - name: Run install pdm (idempotent shell command)
+      shell: |
+        pdm --version || python3 /etc/install-pdm.py
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+# pyenv setup
+    - name: Download pyenv installer
+      get_url:
+        url: https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer
+        dest: /etc/pyenv-installer
+
+    - name: Run pyenv-installer (idempotent shell command)
+      shell: |
+        ls /home/"{{ create_user }}"/.pyenv || bash /etc/pyenv-installer
+      args:
+        creates: /home/"{{ create_user }}"/.pyenv/README.md
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+#    - name: Run pyenv install py3.9
+#      shell: |
+#        /home/"{{ create_user }}"/.pyenv/bin/pyenv install 3.9.1
+#      vars:
+#        ansible_become_user: "{{ create_user }}"
+
+#    - name: Add pyenv to .profile
+#      lineinfile: |
+#export PYENV_ROOT="$HOME/.pyenv"
+#export PATH="$PYENV_ROOT/bin:$PATH"
+#eval "$(pyenv init --path)"
+#
+#        
+#    - name: Add pyenv to .bashrc
+#      lineinfile:
+#eval "$(pyenv init -)"
+#
+
+    - name: Download pip installer
+      get_url:
+        url: https://bootstrap.pypa.io/get-pip.py
+        dest: /etc/get-pip.py
+
+    - name: Run pip install for 3.9
+      shell: |
+        python3.9 /etc/get-pip.py
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Run pip install aws
+      shell: |
+        python3 -m pip install -U awscli
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Download node installer
+      get_url:
+        url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh
+        dest: /etc/install-nvm.sh
+
+    - name: fuckit, nvm install instead
+      shell: |
+        bash /etc/install-nvm.sh
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: install node 10
+      shell: |
+        /bin/bash -i -c 'nvm install 10.24.1'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: install node 12
+      shell: |
+        /bin/bash -i -c 'nvm install 12.22.6'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: set node 12 as default
+      shell: |
+        /bin/bash -i -c 'nvm alias default 12.22.6'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: install yarn
+      shell: |
+        /bin/bash -i -c 'npm install -g yarn http-server'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Configure gradle
+      shell: |
+        mkdir -p /home/"{{ create_user }}"/.gradle && echo 'systemProp.disableKapt=true' > /home/"{{ create_user }}"/.gradle/gradle.properties
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+# idea setup
+
+    - name: Download intellij IDEA community gzip
+      get_url:
+        url: https://download.jetbrains.com/idea/ideaIC-2021.2.1.tar.gz
+        dest: /etc/ideaIC-2021.2.1.tar.gz
+
+    - name: Unzip intellij IDEA community gzip
+      shell: |
+        tar -xzvf /etc/ideaIC-2021.2.1.tar.gz
+      args:
+        creates: /etc/idea-IC-212.5080.55/LICENSE.txt
+        chdir: /etc
+
+
+#    - name: Add workaround for red screen issue
+#      lineinfile: |
+#-Dsun.java2d.xrender=false
+#      file: /etc/idea-IC-212.5080.55/bin/idea64.vmoptions

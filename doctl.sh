@@ -12,8 +12,8 @@ else
 	#doctl compute droplet create --image ubuntu-20-04-x64 --size s-2vcpu-4gb-intel --region sfo3 --enable-private-networking --ssh-keys 31067977,31059354,31100429 --wait desktop
 	doctl compute droplet create --image ubuntu-22-04-x64 --size s-2vcpu-4gb-intel --region sfo3 --enable-private-networking \
 		--ssh-keys 35943893,35561772,31067977,31059354,31100429 --wait desktop"$TEST" \
-		-o json | tee -a /tmp/doctl.out \
-		jq -r ' .[0].networks.v4 | .[] | select(.type == "public") | .ip_address ' >> /etc/ansible/hosts
+		-o json | tee -a /tmp/doctl.out | \
+		jq -r ' .[0].networks.v4 | .[] | select(.type == "public") | .ip_address ' > /etc/ansible/hosts
 # jout[0].networks.v4 | filter(.type = public) | .ip_address  |
 	#doctl compute droplet create --image ubuntu-20-04-x64 --size s-4vcpu-8gb-intel --region sfo3 --enable-private-networking --ssh-keys 31067977,31059354,31100429 --wait desktop
 fi
