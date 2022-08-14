@@ -50,6 +50,7 @@
       with_file:
         - public_keys/work-laptop.pub
         - public_keys/boweis-macbook-pro.pub
+        - public_keys/boweis-windows-sha256.pub
 
     - name: Create a ssh key for the new user
       user:
