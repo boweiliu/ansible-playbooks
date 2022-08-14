@@ -152,16 +152,18 @@
         ansible_become_user: "{{ create_user }}"
 
     - name: Add pyenv to .profile
-      lineinfile: |
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
+      lineinfile:
+        path: .profile
+        line: |
+          export PYENV_ROOT="$HOME/.pyenv"
+          export PATH="$PYENV_ROOT/bin:$PATH"
+          eval "$(pyenv init --path)"
 
-        
     - name: Add pyenv to .bashrc
       lineinfile:
-eval "$(pyenv init -)"
-
+        path: .bashrc
+        line: |
+          eval "$(pyenv init -)"
 
 # pdm setup
     - name: Download install pdm
