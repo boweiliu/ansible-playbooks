@@ -85,6 +85,9 @@
     - name: Reload ssh service
       service: name=ssh state=reloaded
 
+    - name: Reload journal service
+      shell: systemctl restart systemd-journald.service
+
 # c setup
     - name: Update apt
       apt: update_cache=yes
