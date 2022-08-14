@@ -185,7 +185,7 @@
 
     - name: Run pip install for 3.9
       shell: |
-        python3.9 /etc/get-pip.py
+        python3 /etc/get-pip.py
       vars:
         ansible_become_user: "{{ create_user }}"
 
