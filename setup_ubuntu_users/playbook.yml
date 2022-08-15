@@ -248,13 +248,3 @@
         python3 -m pip install -U awscli
       vars:
         ansible_become_user: "{{ create_user }}"
-
-# repo-specific stuff
-
-    - name: Cargo install wasm pack
-      community.general.cargo:
-        name: wasm-pack
-      vars:
-        ansible_become_user: "{{ create_user }}"
-
-
