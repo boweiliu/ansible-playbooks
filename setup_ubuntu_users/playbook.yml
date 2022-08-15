@@ -142,7 +142,7 @@
 
     - name: Run pyenv install py3.10
       shell: |
-        /home/"{{ create_user }}"/.pyenv/bin/pyenv install 3.10.4
+        /home/"{{ create_user }}"/.pyenv/bin/pyenv install -s 3.10.4
       vars:
         ansible_become_user: "{{ create_user }}"
 
