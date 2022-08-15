@@ -128,13 +128,17 @@
         state: directory
         mode: '0755'
 
-    - name: Create code dir
+    - name: Create ansible file
       ansible.builtin.file:
-        path: /home/{{ create_user }}/code
-        state: directory
-        mode: '0755'
-      vars:
-        ansible_become_user: "{{ create_user }}"
+        path: /etc/ansible/hosts
+        state: file
+        mode: '0644'
+
+    - name: Add ansible hosts
+      lineinfile:
+        path: /etc/ansible/hosts
+        search_string: localhost
+        line: localhost
 
 # pip setup
     - name: Download get-pip

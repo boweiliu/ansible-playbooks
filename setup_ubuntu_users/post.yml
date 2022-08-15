@@ -27,12 +27,16 @@
         name: user.email
         scope: global
         value: liubowei@gmail.com
+      vars:
+        ansible_become_user: "{{ create_user }}"
     
     - name: Add a setting to ~/.gitconfig
       community.general.git_config:
         name: user.name
         scope: global
         value: Bowei Liu
+      vars:
+        ansible_become_user: "{{ create_user }}"
 
     - name: Git checkout
       ansible.builtin.git:
