@@ -88,7 +88,7 @@
     - name: Reload journal service
       shell: systemctl restart systemd-journald.service
 
-# c setup
+# apt setup
     - name: Update apt
       apt: update_cache=yes
 
@@ -111,6 +111,22 @@
         state: latest
         name: 
           - tailscale
+
+# self ansible
+    - name: Create ansible dir
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        mode: '0755'
+
+    - name: Create code dir
+      ansible.builtin.file:
+        path: /home/{{ create_user }}/code
+        state: directory
+        mode: '0755'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
 
 # pip setup
     - name: Download get-pip
