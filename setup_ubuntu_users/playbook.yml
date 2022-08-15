@@ -116,6 +116,11 @@
         name: 
           - tailscale
 
+    - name: Install ngrok
+      community.general.snap:
+        name:
+          - ngrok
+
 # self ansible
     - name: Create ansible dir
       ansible.builtin.file:
@@ -130,7 +135,6 @@
         mode: '0755'
       vars:
         ansible_become_user: "{{ create_user }}"
-
 
 # pip setup
     - name: Download get-pip
@@ -185,7 +189,8 @@
         group: root
         state: link
 
-# pyenv setup
+# pyenv setup - compile from source
+
     - name: Download pyenv installer
       get_url:
         url: https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer
