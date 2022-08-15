@@ -1,5 +1,5 @@
 ---
 create_user: bowei
 copy_local_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
-sys_packages: [ 'curl', 'vim', 'git', 'ufw', 'python3-venv', 'wireguard', 'build-essential', 'zlib1g-dev', 'libffi-dev', 'openjdk-11-jdk', 'postgresql', 'postgresql-client', 'jq', 'libssl-dev', 'libbz2-dev', 'libreadline-dev', 'libsqlite3-dev', 'wget', 'llvm', 'libncurses5-dev', 'libncursesw5-dev', 'xz-utils', 'tk-dev', 'liblzma-dev']
+sys_packages: [ 'curl', 'vim', 'git', 'ufw', 'python3-venv', 'wireguard', 'build-essential', 'zlib1g-dev', 'libffi-dev', 'openjdk-11-jdk', 'postgresql', 'postgresql-client', 'jq', 'libssl-dev', 'libbz2-dev', 'libreadline-dev', 'libsqlite3-dev', 'wget', 'llvm', 'libncurses5-dev', 'libncursesw5-dev', 'xz-utils', 'tk-dev', 'liblzma-dev', 'neovim']
 

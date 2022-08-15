@@ -225,3 +225,5 @@
     - name: Cargo install wasm pack
       community.general.cargo:
         name: wasm-pack
+      vars:
+        ansible_become_user: "{{ create_user }}"
