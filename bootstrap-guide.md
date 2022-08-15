@@ -10,4 +10,5 @@
 * python3 get-pip.py
 * python3 -m pip -U pip
 * python3 -m pip -U ansible
+* doctl auth init # and put in your key
 
