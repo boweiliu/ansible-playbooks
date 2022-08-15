@@ -10,3 +10,5 @@ ansible-playbook -u bowei playbook.yml
 ansible-playbook post.yml || 
 ansible-playbook -u bowei post.yml
 
+echo -e '\a\a\a\a\a\a\a\a\a'
+
