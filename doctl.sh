@@ -5,19 +5,21 @@ touch /etc/ansible/hosts
 
 set -x
 
+#size=s-2vcpu-4gb-intel
+size=s-4vcpu-8gb-intel
+
 if [[ "$1" = down ]] ;
 then
 	doctl compute droplet delete --force desktop"$TEST"
 else
-	#doctl compute droplet create --image ubuntu-20-04-x64 --size s-2vcpu-4gb-intel --region sfo3 --enable-private-networking --ssh-keys 31067977,31059354,31100429 --wait desktop
-	doctl compute droplet create --image ubuntu-22-04-x64 --size s-2vcpu-4gb-intel --region sfo3 --enable-private-networking \
+	#doctl compute droplet create --image ubuntu-20-04-x64 --size "$size" --region sfo3 --enable-private-networking --ssh-keys 31067977,31059354,31100429 --wait desktop
+	doctl compute droplet create --image ubuntu-22-04-x64 --size "$size" --region sfo3 --enable-private-networking \
 		--ssh-keys 35943893,35561772,31067977,31059354,31100429 --wait desktop"$TEST" \
 		-o json | tee -a /tmp/doctl.out | \
 		jq -r ' .[0].networks.v4 | .[] | select(.type == "public") | .ip_address ' > /etc/ansible/hosts && \
 	export ANSIBLE_HOST_KEY_CHECKING=false && \
 	sleep 5 : 'wait for networking to come up' && \
 	bash ansible.sh
-	#doctl compute droplet create --image ubuntu-20-04-x64 --size s-4vcpu-8gb-intel --region sfo3 --enable-private-networking --ssh-keys 31067977,31059354,31100429 --wait desktop
 fi
 
 # doctl compute ssh-key list >> ./doctl.sh
