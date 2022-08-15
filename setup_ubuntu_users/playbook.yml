@@ -112,14 +112,6 @@
         name: 
           - tailscale
 
-    - name: Install gcc
-      ansible.builtin.apt:
-        update_cache: yes
-        state: latest
-        name: 
-          - build-essentials
-
-
 # pip setup
     - name: Download get-pip
       get_url:
