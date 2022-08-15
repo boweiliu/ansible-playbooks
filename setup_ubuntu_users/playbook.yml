@@ -126,6 +126,37 @@
       shell: |
         python3 -m pip install -U ansible
 
+# NODE
+    - name: Download node installer
+      get_url:
+        url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh
+        dest: /etc/install-nvm.sh
+
+    - name: fuckit, nvm install instead
+      shell: |
+        bash /etc/install-nvm.sh
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: install node 16
+      shell: |
+        /bin/bash -i -c 'nvm install 16.13.2'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: install yarn
+      shell: |
+        /bin/bash -i -c 'npm install -g yarn http-server'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+# rust
+    - name: install rustup
+      shell: |
+        curl https://sh.rustup.rs -sSf | sh -s -- -y
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
 # pyenv setup
     - name: Download pyenv installer
       get_url:
@@ -187,29 +218,6 @@
     - name: Run pip install aws
       shell: |
         python3 -m pip install -U awscli
-      vars:
-        ansible_become_user: "{{ create_user }}"
-
-    - name: Download node installer
-      get_url:
-        url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh
-        dest: /etc/install-nvm.sh
-
-    - name: fuckit, nvm install instead
-      shell: |
-        bash /etc/install-nvm.sh
-      vars:
-        ansible_become_user: "{{ create_user }}"
-
-    - name: install node 16
-      shell: |
-        /bin/bash -i -c 'nvm install 16.13.2'
-      vars:
-        ansible_become_user: "{{ create_user }}"
-
-    - name: install yarn
-      shell: |
-        /bin/bash -i -c 'npm install -g yarn http-server'
       vars:
         ansible_become_user: "{{ create_user }}"
 
