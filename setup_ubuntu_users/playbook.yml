@@ -157,6 +157,14 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
+    - name: symlink cargo
+      ansible.builtin.file:
+        src: /home/{{ create_user }}/.cargo/bin/cargo
+        dest: /usr/bin/cargo
+        owner: root
+        group: root
+        state: link
+
 # pyenv setup
     - name: Download pyenv installer
       get_url:
@@ -225,17 +233,12 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
-# rustc
-    - name: symlink cargo
-      ansible.builtin.file:
-        src: /home/{{ create_user }}/.cargo/bin/cargo
-        dest: /usr/bin/cargo
-        owner: root
-        group: root
-        state: link
+# repo-specific stuff
 
     - name: Cargo install wasm pack
       community.general.cargo:
         name: wasm-pack
       vars:
         ansible_become_user: "{{ create_user }}"
+
+

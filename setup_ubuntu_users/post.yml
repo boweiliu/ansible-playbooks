@@ -1,0 +1,42 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+# repo-specific stuff
+    - name: Cargo install wasm pack
+      community.general.cargo:
+        name: wasm-pack
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Create ansible dir
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        mode: '0755'
+
+    - name: Create code dir
+      ansible.builtin.file:
+        path: /home/{{ create_user }}/code
+        state: directory
+        mode: '0755'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Git checkout
+      ansible.builtin.git:
+        repo: 'https://github.com/boweiliu/wasm-game-of-life.git'
+        dest: /home/{{ create_user }}/code/wasm-game-of-life
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Git checkout this
+      ansible.builtin.git:
+        repo: 'https://github.com/boweiliu/ansible-playbooks.git'
+        dest: /home/{{ create_user }}/code/ansible-playbooks
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
