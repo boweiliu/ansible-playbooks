@@ -10,7 +10,8 @@ size=s-4vcpu-8gb-intel
 
 if [[ "$1" = down ]] ;
 then
-	doctl compute droplet delete --force desktop"$TEST"
+	doctl compute droplet list | grep desktop | cut -d' ' -f1 | xargs doctl compute droplet delete --force
+	#doctl compute droplet delete --force desktop"$TEST"
 else
 	#doctl compute droplet create --image ubuntu-20-04-x64 --size "$size" --region sfo3 --enable-private-networking --ssh-keys 31067977,31059354,31100429 --wait desktop
 	doctl compute droplet create --image ubuntu-22-04-x64 --size "$size" --region sfo3 --enable-private-networking \
