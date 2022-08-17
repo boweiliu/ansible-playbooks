@@ -1,3 +1,5 @@
+vim plugins: https://github.com/sharksforarms/neovim-rust
+
 tagbar vim
 
 https://github.com/preservim/tagbar/blob/master/doc/tagbar.txt#L1937
