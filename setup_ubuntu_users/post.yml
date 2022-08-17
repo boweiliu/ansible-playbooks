@@ -55,6 +55,7 @@
         ansible_become_user: "{{ create_user }}"
 
     - name: Git checkout
+      ignore_errors: true
       ansible.builtin.git:
         repo: 'https://github.com/boweiliu/wasm-game-of-life.git'
         dest: /home/{{ create_user }}/code/wasm-game-of-life
@@ -62,6 +63,7 @@
         ansible_become_user: "{{ create_user }}"
 
     - name: Git set remote
+      ignore_errors: true
       community.general.git_config:
         scope: local
         repo: /home/{{ create_user }}/code/wasm-game-of-life
@@ -71,6 +73,7 @@
         ansible_become_user: "{{ create_user }}"
 
     - name: Git checkout this
+      ignore_errors: true
       ansible.builtin.git:
         repo: 'https://github.com/boweiliu/ansible-playbooks.git'
         dest: /home/{{ create_user }}/code/ansible-playbooks
@@ -78,6 +81,7 @@
         ansible_become_user: "{{ create_user }}"
 
     - name: Git set remote this
+      ignore_errors: true
       community.general.git_config:
         scope: local
         repo: /home/{{ create_user }}/code/ansible-playbooks
@@ -86,3 +90,55 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
+    - name: setup vim plugin
+      args:
+        creates: /home/"{{ create_user }}"/.vim/autoload/plug.vim
+      shell: |
+        curl -fLo /home/{{ create_user }}/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Create vimrc
+      ansible.builtin.file:
+        path: /home/{{ create_user }}/.vimrc
+        state: touch
+        mode: '0644'
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: populate vimrc
+      lineinfile:
+        path: /home/{{ create_user }}/.vimrc
+        regexp: |
+          Prerequisites
+        line: |
+          " Prerequisites:
+          " - vim-plug: https://github.com/junegunn/vim-plug
+          " - For tagbar: a tag generator (i.e. apt-get install exuberant-ctags)
+          
+          " Steps:
+          " - :PlugInstall
+          " - Restart
+          
+          call plug#begin('~/.vim/plugged')
+          
+          " Syntastic is a syntax checking plugin
+          " It runs files through external syntax checkers and displays any
+          " resulting errors to the user
+          Plug 'scrooloose/syntastic'
+          
+          " Tagbar will generate tags in memory, allowing you to navitage to
+          " structs, functions, etc. In the current file
+          Plug 'preservim/tagbar'
+          
+          " Rust file detection, syntax highlighting, formatting,
+          " Syntastic integration, and more
+          Plug 'rust-lang/rust.vim'
+          
+          call plug#end()
+          
+          syntax enable
+          filetype plugin indent on
+          
+          " Toggle tagbar
+          nmap <F8> :TagbarToggle<CR>
