@@ -11,4 +11,7 @@
 * python3 -m pip -U pip
 * python3 -m pip -U ansible
 * doctl auth init # and put in your key
+* cp vars/secret.yml.tpl vars/secret.yml # and put in the github token with creds : https://unix.stackexchange.com/questions/136894/command-line-method-or-programmatically-add-ssh-key-to-github-com-user-account
+~
+
 
