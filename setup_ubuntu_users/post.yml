@@ -3,6 +3,7 @@
   become: true
   vars_files:
     - vars/default.yml
+    - vars/secret.yml
 
   tasks:
 # repo-specific stuff
