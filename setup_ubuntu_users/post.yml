@@ -32,9 +32,6 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
-      vars:
-        ansible_become_user: "{{ create_user }}"
-
     - name: Add a setting to ~/.gitconfig
       community.general.git_config:
         name: user.email
