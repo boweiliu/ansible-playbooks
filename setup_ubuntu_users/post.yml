@@ -135,6 +135,8 @@
           " Syntastic integration, and more
           Plug 'rust-lang/rust.vim'
           
+          Plug 'tpope/vim-sensible'
+
           call plug#end()
           
           syntax enable
