@@ -3,11 +3,17 @@
 #################################################
 ---
 - hosts: all
+  gather_facts: no
   become: true
   vars_files:
     - vars/default.yml
 
   tasks:
+    - name: start
+      ansible.builtin.wait_for:
+        timeout: 1
+      delegate_to: localhost
+
     - name: Wait
       ansible.builtin.wait_for_connection:
         timeout: 300
