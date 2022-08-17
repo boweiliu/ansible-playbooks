@@ -26,6 +26,15 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
+    - name: run command to upload ssh pub key
+      shell: |
+        curl -H "Authorization: token {{ github_token }}" --data '{"title":"test-key","key":"'"$(cat ~/.ssh/id_rsa.pub)"'"}' https://api.github.com/user/keys
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
     - name: Add a setting to ~/.gitconfig
       community.general.git_config:
         name: user.email
