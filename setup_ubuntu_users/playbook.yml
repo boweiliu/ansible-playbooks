@@ -10,7 +10,7 @@
   tasks:
     - name: Wait
       ansible.builtin.wait_for_connection:
-        timeout: 60
+        timeout: 300
 
     - name: Install Prerequisites
       apt: name=aptitude update_cache=yes state=latest force_apt_get=yes
@@ -131,7 +131,7 @@
     - name: Create ansible file
       ansible.builtin.file:
         path: /etc/ansible/hosts
-        state: file
+        state: touch
         mode: '0644'
 
     - name: Add ansible hosts

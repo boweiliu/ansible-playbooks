@@ -19,7 +19,6 @@ else
 		-o json | tee -a /tmp/doctl.out | \
 		jq -r ' .[0].networks.v4 | .[] | select(.type == "public") | .ip_address ' > /etc/ansible/hosts && \
 	export ANSIBLE_HOST_KEY_CHECKING=false && \
-	sleep 5  && : 'wait for networking to come up' && \
 	bash ansible.sh
 fi
 
