@@ -6,6 +6,6 @@ results in
 
 https://github.com/microsoft/vscode-python/issues/3517
 
-apt doesnt work, snap doesnt work, have to install from source
+apt exuberant doesnt work, snap doesnt work (https://github.com/oracle/opengrok/issues/3342), but apt universal-ctags does work
 
 
