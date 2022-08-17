@@ -44,7 +44,8 @@
         value: liubowei@gmail.com
       vars:
         ansible_become_user: "{{ create_user }}"
-    
+
+          # see https://github.com/ansible/ansible/issues/75315    
     - name: Add a setting to ~/.gitconfig
       community.general.git_config:
         name: user.name
