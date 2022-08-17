@@ -11,7 +11,12 @@
         name: wasm-pack
       vars:
         ansible_become_user: "{{ create_user }}"
-          # delete this
+
+    - name: Cargo install watch
+      community.general.cargo:
+        name: cargo-watch
+      vars:
+        ansible_become_user: "{{ create_user }}"
 
     - name: Create code dir
       ansible.builtin.file:
@@ -20,7 +25,6 @@
         mode: '0755'
       vars:
         ansible_become_user: "{{ create_user }}"
-          # git
 
     - name: Add a setting to ~/.gitconfig
       community.general.git_config:
