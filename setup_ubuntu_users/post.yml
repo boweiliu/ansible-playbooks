@@ -142,3 +142,9 @@
           
           " Toggle tagbar
           nmap <F8> :TagbarToggle<CR>
+
+    - name: load vim plugins
+      shell: |
+        vim  -c ':PlugInstall' -c ':q!' -c ':q!'
+      vars:
+        ansible_become_user: "{{ create_user }}"
