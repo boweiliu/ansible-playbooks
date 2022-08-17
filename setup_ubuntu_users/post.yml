@@ -30,8 +30,12 @@
     - name: run command to upload ssh pub key
       shell: |
         curl -H "Authorization: token {{ github_token }}" --data '{"title":"test-key","key":"'"$(cat ~/.ssh/id_rsa.pub)"'"}' https://api.github.com/user/keys
+      register: shell
       vars:
         ansible_become_user: "{{ create_user }}"
+
+    - name: debug
+      debug: var=shell.stdout_lines
 
     - name: Add a setting to ~/.gitconfig
       community.general.git_config:
