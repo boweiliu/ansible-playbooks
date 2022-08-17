@@ -66,7 +66,7 @@
         ansible_become_user: "{{ create_user }}"
 
     - name: Git set remote this
-      ansible.builtin.git:
+      community.general.git_config:
         scope: local
         repo: /home/{{ create_user }}/code/ansible-playbooks
         name: remote.origin.url
