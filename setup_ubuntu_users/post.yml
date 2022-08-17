@@ -49,10 +49,28 @@
       vars:
         ansible_become_user: "{{ create_user }}"
 
+    - name: Git set remote
+      community.general.git_config:
+        scope: local
+        repo: /home/{{ create_user }}/code/wasm-game-of-life
+        name: remote.origin.url
+        value: git@github.com:boweiliu/wasm-game-of-life
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
     - name: Git checkout this
       ansible.builtin.git:
         repo: 'https://github.com/boweiliu/ansible-playbooks.git'
         dest: /home/{{ create_user }}/code/ansible-playbooks
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
+    - name: Git set remote this
+      ansible.builtin.git:
+        scope: local
+        repo: /home/{{ create_user }}/code/ansible-playbooks
+        name: remote.origin.url
+        value: git@github.com:boweiliu/ansible-playbooks
       vars:
         ansible_become_user: "{{ create_user }}"
 
