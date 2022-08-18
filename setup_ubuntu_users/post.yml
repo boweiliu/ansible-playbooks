@@ -154,6 +154,8 @@
           \  'rust': ['analyzer'],
           \}
 
+          " TODO: hotkey ALEHover, TagbarToggle
+
     - name: install rust analyzer
       args:
         creates: /home/"{{ create_user }}"/.local/bin/rust-analyzer
