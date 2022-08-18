@@ -148,6 +148,19 @@
           
           " Toggle tagbar
           nmap <F8> :TagbarToggle<CR>
+          
+          " Required, explicitly enable ale
+          let g:ale_linters = {
+          \  'rust': ['analyzer'],
+          \}
+
+    - name: install rust analyzer
+      args:
+        creates: /home/"{{ create_user }}"/.local/bin/rust-analyzer
+      shell: |
+        mkdir -p ~/.local/bin && curl -L https://github.com/rust-lang/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip -c - > ~/.local/bin/rust-analyzer && chmod +x ~/.local/bin/rust-analyzer
+      vars:
+        ansible_become_user: "{{ create_user }}"
 
     - name: load vim plugins
       shell: |
