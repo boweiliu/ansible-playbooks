@@ -134,7 +134,11 @@
           " Rust file detection, syntax highlighting, formatting,
           " Syntastic integration, and more
           Plug 'rust-lang/rust.vim'
-          
+
+          " https://petermalmgren.com/rc-batch-day-9/
+          Plug 'dense-analysis/ale'
+
+          " general good practice
           Plug 'tpope/vim-sensible'
 
           call plug#end()
