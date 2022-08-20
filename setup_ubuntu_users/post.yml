@@ -109,8 +109,8 @@
     - name: populate vimrc
       lineinfile:
         path: /home/{{ create_user }}/.vimrc
-        regexp: |
-          Prerequisites
+        search_string: |
+          " Prerequisites:
         line: |
           " Prerequisites:
           " - vim-plug: https://github.com/junegunn/vim-plug
