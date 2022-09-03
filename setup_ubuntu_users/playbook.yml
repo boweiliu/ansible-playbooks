@@ -136,6 +136,19 @@
         search_string: localhost
         line: localhost
 
+# sudo groupadd docker
+    - name: Create docker group
+      group:
+        name: docker
+        state: present
+
+# sudo groupadd docker
+    - name: Add remote user to docker group
+      user:
+        name: "{{ create_user }}"
+        groups: docker
+        append: yes
+
 # pip setup
     - name: Download get-pip
       get_url:
