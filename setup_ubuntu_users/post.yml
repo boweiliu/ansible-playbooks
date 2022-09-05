@@ -139,6 +139,9 @@
           " general good practice
           Plug 'tpope/vim-sensible'
 
+          " file finding
+          Plug 'ctrlpvim/ctrlp.vim'
+
           call plug#end()
           
           syntax enable
