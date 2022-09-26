@@ -270,3 +270,32 @@
         python3 -m pip install -U awscli
       vars:
         ansible_become_user: "{{ create_user }}"
+
+# golang setup
+    - name: Download go binary
+      get_url:
+        url: https://go.dev/dl/go1.19.1.linux-amd64.tar.gz
+        dest: /etc/go.tar.gz
+        checksum: "sha256:acc512fbab4f716a8f97a8b3fbaa9ddd39606a28be6c2515ef7c6c6311acffde"
+
+    - name: Extract go binary
+      unarchive:
+        src: /etc/go.tar.gz
+        dest: /usr/local
+        copy: no
+
+    - name: Modify .bashrc in the home
+      blockinfile:
+        dest: /home/{{ create_user }}/.bashrc
+        block: |
+          export GOROOT=/usr/local/go
+          export GOPATH=$HOME/go
+          export GOBIN=$GOPATH/bin
+          export PATH=$PATH:$GOBIN:$GOROOT/bin
+        marker: '# {mark} ANSIBLE MANAGED BLOCK - Golang'
+        insertafter: EOF
+        create: yes
+        state: present
+      vars:
+        ansible_become_user: "{{ create_user }}"
+
