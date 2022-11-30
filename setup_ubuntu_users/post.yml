@@ -110,6 +110,12 @@
       lineinfile:
         path: /home/{{ create_user }}/.vimrc
         line: |
+          set autoindent
+          set tabstop=2
+          set expandtab
+          set shiftwidth=2
+          set smartindent
+
           " Prerequisites:
           " - vim-plug: https://github.com/junegunn/vim-plug
           " - For tagbar: a tag generator (i.e. apt-get install exuberant-ctags)
