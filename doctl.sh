@@ -15,7 +15,7 @@ then
 else
 	#doctl compute droplet create --image ubuntu-20-04-x64 --size "$size" --region sfo3 --enable-private-networking --ssh-keys 31067977,31059354,31100429 --wait desktop
 	doctl compute droplet create --image ubuntu-22-04-x64 --size "$size" --region sfo3 --enable-private-networking \
-		--ssh-keys 35943893,35561772,31067977,31059354,31100429 --wait desktop"$TEST" \
+		--ssh-keys 35943893,35561772,31067977,31059354,31100429,39370843 --wait desktop"$TEST" \
 		-o json | tee -a /tmp/doctl.out | \
 		jq -r ' .[0].networks.v4 | .[] | select(.type == "public") | .ip_address ' > /etc/ansible/hosts && \
 	export ANSIBLE_HOST_KEY_CHECKING=false && \
